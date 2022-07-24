@@ -115,13 +115,16 @@ class OTFUserData:
             exclude=['classHistoryUuId', 'classId', 'isIntro', 'isLeader', 'memberEmail', 'memberName', 'memberPerformanceId', 'studioAccountUuId', 'version', 'workoutType']
         )
 
-    def by_coach(self, ascending=True, merge_similar=False) -> pd.DataFrame:
+    def by_coach(self, ascending=True, first_name_only=False) -> pd.DataFrame:
         """
         Returns data by coach name sorted by class count. 
         Specify ascending=False to show coaches with most classes first.
-        Specify merge_similar=True to combine similar coach names into one.
+        Specify first_name_only=True to group coaches by their first name.
         """
-        pivot = self.class_df.pivot_table(
+        coach_data_df = self.class_df.copy(deep=True)
+        if first_name_only:
+            coach_data_df["coach"] = coach_data_df["coach"].apply(lambda x: x.split(' ')[0].title())
+        pivot = coach_data_df.pivot_table(
             index='coach',
             values='memberUuId',
             aggfunc=np.count_nonzero
