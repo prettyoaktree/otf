@@ -12,11 +12,11 @@ class Objectify(object):
 
 class OTFUserData:
 
-    def __init__(self, client_id=None, username=None, password=None, get_class_data=True, csv_filename=None):
+    def __init__(self, client_id=None, username=None, password=None, csv_filename=None):
         """
         Retrieves data for OTF member.
         To get live data, specify client_id, username, and password.
-        For testing purposes, you may also load existing csv data by specifying csv_filename.
+        For testing purposes, you may load existing csv data by specifying csv_filename. This will prevent live requests from being sent to OTF.
         """
         self.client_id = client_id
         self.username = username
