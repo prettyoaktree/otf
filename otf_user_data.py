@@ -1,3 +1,4 @@
+from os import O_NONBLOCK
 import requests
 import json
 import pandas as pd
@@ -12,11 +13,11 @@ class Objectify(object):
 
 class OTFUserData:
 
-    def __init__(self, client_id=None, username=None, password=None, get_class_data=True, csv_filename=None):
+    def __init__(self, client_id=None, username=None, password=None, csv_filename=None):
         """
         Retrieves data for OTF member.
         To get live data, specify client_id, username, and password.
-        For testing purposes, you may also load existing csv data by specifying csv_filename.
+        For testing purposes, you may load existing csv data by specifying csv_filename. This will prevent live requests from being sent to OTF.
         """
         self.client_id = client_id
         self.username = username
@@ -24,6 +25,12 @@ class OTFUserData:
         self.csv_filename = csv_filename
         self.otf_data_endpoint = 'https://api.orangetheory.co/virtual-class/in-studio-workouts'
         self.otf_auth_endpoint = 'https://cognito-idp.us-east-1.amazonaws.com/'
+        empty = {'empty': True}
+        self.user_attributes = Objectify(**empty)
+        self.member_data = Objectify(**empty)
+        self.member_profile = Objectify(**empty)
+        self.class_summary = Objectify(**empty)
+        self.home_studio = Objectify(**empty)
 
         if self.csv_filename is not None:
             self.class_df = pd.read_csv(self.csv_filename)
@@ -132,3 +139,16 @@ class OTFUserData:
             aggfunc=np.count_nonzero
         ).rename(columns={'memberUuId': 'class count'}).sort_values(by='class count', ascending=ascending)
         return pivot
+
+    def by_class_type(self, ascending=True) -> pd.DataFrame:
+        """
+        Returns data by class type sorted by class count.
+        Specify ascending=False to show class types with most classes first.
+        """
+        pivot = self.class_df.pivot_table(
+            index='classType',
+            values='memberUuId',
+            aggfunc=np.count_nonzero
+        ).rename(columns={'memberUuId': 'class count'}).sort_values(by='class count', ascending=ascending)
+        return pivot
+        

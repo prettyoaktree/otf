@@ -9,6 +9,7 @@ from otf_user_data import OTFUserData
 ################
 
 otf_data = OTFUserData(config.OTF_CLIENT_ID, config.EMAIL, config.PASSWORD)
+print()
 print('Class Summary')
 print('=============')
 for k, v in vars(otf_data.class_summary).items():
