@@ -1,6 +1,6 @@
 __pycache__/
 venv/
 otf.code-workspace
-.vscode/launch.json
+.vscode/
 config.py
 data.csv
